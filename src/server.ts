@@ -9,12 +9,11 @@ let server: Server;
 
 const startServer = async () => {
   try {
-    console.log(envVars.NODE_ENV);
     await mongoose.connect(envVars.DB_URL);
 
     console.log("connected to mongoose ");
     server = app.listen(envVars.PORT, () => {
-      console.log(`server is listening on port${envVars.PORT}`);
+      console.log(`http://localhost:${envVars.PORT}`);
     });
   } catch (error) {
     console.log(error);
