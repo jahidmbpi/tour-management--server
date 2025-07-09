@@ -1,22 +1,55 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
+import { envVars } from "./app/config/env";
 
 let server: Server;
 
-const port = 5000;
-
 const startServer = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://tour-management:Pu8qhXmYzYsy6pTg@cluster0.g8zp6.mongodb.net/tour-management?"
-    );
+    console.log(envVars.NODE_ENV);
+    await mongoose.connect(envVars.DB_URL);
+
     console.log("connected to mongoose ");
-    server = app.listen(port, () => {
-      console.log(`server is listening on port${port}`);
+    server = app.listen(envVars.PORT, () => {
+      console.log(`server is listening on port${envVars.PORT}`);
     });
   } catch (error) {
     console.log(error);
   }
 };
 startServer();
+
+// process.on("unhandledRejection", (err) => {
+//   console.log("unhandale rejaction detected ... server shutting dwon", err);
+//   if (server) {
+//     server.close(() => {
+//       process.exit(1);
+//     });
+//   }
+//   process.exit();
+// });
+// Promise.reject(new Error("I forgot to catch this promise"));
+// process.on("uncaughtException", (err) => {
+//   console.log(" uncaught exception detected ... server shutting dwon", err);
+//   if (server) {
+//     server.close(() => {
+//       process.exit(1);
+//     });
+//   }
+//   process.exit();
+// });
+
+// throw new Error(" i forget to handel this local error ");
+
+// process.on("SIGTERM", () => {
+//   console.log("SIGTERM signale recived detected ... server shutting dwon");
+//   if (server) {
+//     server.close(() => {
+//       process.exit(1);
+//     });
+//   }
+//   process.exit();
+// });
