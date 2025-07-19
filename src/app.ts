@@ -3,14 +3,17 @@ import cros from "cors";
 
 import { globalErrorhandelar } from "./app/middlewares/globalErrorHandelars/globalErrorHandelars";
 import notFound from "./app/middlewares/notFound/notFound";
-import { UserRoutes } from "./user/user.routes";
+import router from "./routes";
 
 const app = Express();
 
 app.use(Express.json());
 app.use(cros());
 
-app.use("/api/v1/user", UserRoutes);
+// app.use("/api/v1", UserRoutes);
+// app.use("/api/v1", AuthRoute);
+
+app.use("/api/v1", router);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
