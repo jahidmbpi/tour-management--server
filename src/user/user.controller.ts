@@ -1,8 +1,10 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 
 import hthpStatus from "http-status";
 import userServicecs from "./user.services";
-const createUser = async (req: Request, res: Response) => {
+import catchAsync from "../app/utilse/catchAsync";
+import sendResponse from "../app/utilse/sendResponse";
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await userServicecs.createUser(req.body);
     res.status(hthpStatus.CREATED).json({
@@ -11,13 +13,24 @@ const createUser = async (req: Request, res: Response) => {
       creteduser: user,
     });
   } catch (error) {
-    res.status(hthpStatus.BAD_REQUEST).json({
-      massage: "something went wrong ",
-      error,
-    });
+    next(error);
   }
 };
 
+const getAlluser = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, next: NextFunction) => {
+    const users = await userServicecs.getAllUser();
+    sendResponse(res, {
+      success: true,
+      statusCode: hthpStatus.OK,
+      massage: " get all user  succesfully",
+      data: users,
+    });
+  }
+);
+
 export const userControlers = {
   createUser,
+  getAlluser,
 };
