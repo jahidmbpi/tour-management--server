@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 export enum Role {
   SUPER_ADMIN = "SUPER_ADMIN",
-  ASMIN = "ADMIN",
+  ADMIN = "ADMIN",
   USER = "USER",
   GUIDE = "GUIDE",
 }
@@ -26,9 +26,9 @@ export interface IUser {
   address?: string;
   isDeleted?: string;
   isActive?: isActive;
-  isVerified?: string;
+  isVerified?: boolean;
   role: Role;
   auths: IAuthProvider[];
-  bookings: Types.ObjectId[];
-  guides: Types.ObjectId[];
+  bookings?: Types.ObjectId[];
+  guides?: Types.ObjectId[];
 }

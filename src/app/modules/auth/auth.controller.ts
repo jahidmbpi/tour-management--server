@@ -14,7 +14,7 @@ const credentialLogin = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       massage: "User logged in successfully",
-      data: {},
+      data: loginInfo,
     });
   }
 );
