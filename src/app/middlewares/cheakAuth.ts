@@ -31,8 +31,7 @@ export const checkAuth = (...allowedRoles: Role[]) => {
         throw new AppError(403, "You are not permitted for this route");
       }
 
-      // Optional: attach user info to req.user
-      // req.user = verifyToken;
+      req.user = verifyToken;
 
       next();
     } catch (error) {

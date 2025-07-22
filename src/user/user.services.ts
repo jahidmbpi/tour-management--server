@@ -45,9 +45,6 @@ const updateUser = async (
       throw new AppError(httpStatus.NOT_FOUND, "user not found");
     }
 
-    // if (ifUserExist.isDeleted || ifUserExist.isActive === isActive.BLOCKED) {
-    //   throw new AppError(httpStatus.FORBIDDEN, "this user con not be updated");
-    // }
     if (decodedTocken.Role === Role.USER || decodedTocken.Role === Role.GUIDE) {
       throw new AppError(httpStatus.FORBIDDEN, "ypu are not authorized");
     }

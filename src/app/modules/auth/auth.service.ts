@@ -36,12 +36,18 @@ const credentialLogin = async (payload: Partial<IUser>) => {
     envVars.JWT_ACCESS_SECRET,
     envVars.JWT_ACCESS_EXPIRE
   );
+
+  const refreshTocken = genaretetocken(
+    jwtPayload,
+    envVars.JWT_REFRESH_SECRECT,
+    envVars.JWT_REFRESH_EXPIRES
+  );
+  delete isUserExist.password;
   return {
     accesTocken,
+    refreshTocken,
+    user: isUserExist,
   };
-  //   return {
-  //     email: isUserExist.email,
-  //   };
 };
 
 export const authService = {
