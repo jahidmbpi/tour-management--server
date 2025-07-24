@@ -7,7 +7,10 @@ import { User } from "../../../user/user.model";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { genaretetocken, verifyTocken } from "../../utilse/jwt";
 import { envVars } from "../../config/env";
-import { createUserToken } from "../../utilse/userTockent";
+import {
+  createNewAccessTockenWithrefeshTocken,
+  createUserToken,
+} from "../../utilse/userTockent";
 
 const credentialLogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
@@ -39,33 +42,12 @@ const credentialLogin = async (payload: Partial<IUser>) => {
   };
 };
 const getnewAccessTocken = async (refreshToken: string) => {
-  const verifyRefreshtocken = verifyTocken(
-    refreshToken,
-    envVars.JWT_REFRESH_SECRECT
-  ) as JwtPayload;
-
-  const isUserExist = await User.findOne({
-    email: verifyRefreshtocken.email,
-  }).lean();
-
-  if (!isUserExist) {
-    throw new AppError(httpStatus.BAD_REQUEST, "User doesn't exist");
-  }
-
-  if (isUserExist.isActive === isActive.BLOCKED) {
-    throw new AppError(httpStatus.BAD_REQUEST, "user  is blocked");
-  }
-  if (isUserExist.isDeleted) {
-    throw new AppError(httpStatus.BAD_REQUEST, "user  is blocked");
-  }
-
-  const userTocken = createUserToken(isUserExist);
-
-  // delete isUserExist.password;
-  const { password: _password, ...rest } = isUserExist;
+  const accessTokenInfo = await createNewAccessTockenWithrefeshTocken(
+    refreshToken
+  );
 
   return {
-    accesstocken: userTocken.accessToken,
+    accessToken: accessTokenInfo.accessTocken,
   };
 };
 
