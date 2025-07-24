@@ -18,6 +18,21 @@ const credentialLogin = catchAsync(
     });
   }
 );
+const getnewAccessTocken = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    const tokenInfo = await authService.getnewAccessTocken(refreshToken);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      massage: "User logged in successfully",
+      data: tokenInfo,
+    });
+  }
+);
 export const authControllers = {
   credentialLogin,
+  getnewAccessTocken,
 };
