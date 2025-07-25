@@ -7,6 +7,7 @@ import { User } from "../../../user/user.model";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { genaretetocken, verifyTocken } from "../../utilse/jwt";
 import { envVars } from "../../config/env";
+
 import {
   createNewAccessTockenWithrefeshTocken,
   createUserToken,
@@ -50,8 +51,41 @@ const getnewAccessTocken = async (refreshToken: string) => {
     accessToken: accessTokenInfo.accessTocken,
   };
 };
+const resetPassword = async (
+  oldPassword: string,
+  newPassword: string,
+  decodedTocken: JwtPayload
+) => {
+  const user = await User.findById(decodedTocken.userId);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  const isOldPasswordMatch = await bcryptjs.compare(
+    oldPassword,
+    user.password as string
+  );
+
+  if (!isOldPasswordMatch) {
+    throw new AppError(httpStatus.FORBIDDEN, "Old password does not match");
+  }
+
+  const newhashedPassword = await bcryptjs.hash(
+    newPassword,
+    Number(envVars.BYCRIPT_SALT_ROUND)
+  );
+
+  user.password = newhashedPassword;
+  await user.save();
+
+  return {
+    message: "Password updated successfully",
+  };
+};
 
 export const authService = {
   credentialLogin,
   getnewAccessTocken,
+  resetPassword,
 };

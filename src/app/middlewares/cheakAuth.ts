@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import httpStatus from "http-status";
 import AppError from "../errorHalper/AppError";
 import { envVars } from "../config/env";
-import { Role } from "../../user/user.interface";
+import { Role, isActive } from "../../user/user.interface";
+import { User } from "../../user/user.model";
 
-// Modified version of checkAuth that accepts allowed roles
 export const checkAuth = (...allowedRoles: Role[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const authHeader = req.headers.authorization;
 
@@ -24,6 +25,22 @@ export const checkAuth = (...allowedRoles: Role[]) => {
         accessToken,
         envVars.JWT_ACCESS_SECRET
       ) as JwtPayload;
+
+      const isUserExist = await User.findOne({
+        email: verifyToken.email,
+      }).lean();
+
+      if (!isUserExist) {
+        throw new AppError(httpStatus.BAD_REQUEST, "User doesn't exist");
+      }
+
+      if (isUserExist.isActive === isActive.BLOCKED) {
+        throw new AppError(httpStatus.BAD_REQUEST, "User is blocked");
+      }
+
+      if (isUserExist.isDeleted) {
+        throw new AppError(httpStatus.BAD_REQUEST, "User is deleted");
+      }
 
       const userRole = verifyToken.role;
 

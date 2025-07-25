@@ -55,8 +55,29 @@ const logOut = catchAsync(
     });
   }
 );
+
+const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    const decodedTocken = req.user;
+    const newUpdatedPassword = await authService.resetPassword(
+      oldPassword,
+      newPassword,
+      decodedTocken
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      massage: "User logged out successfully",
+      data: null,
+    });
+  }
+);
 export const authControllers = {
   credentialLogin,
   getnewAccessTocken,
   logOut,
+  resetPassword,
 };
