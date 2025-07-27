@@ -7,6 +7,7 @@ import router from "./routes";
 import cookieParssar from "cookie-parser";
 import passport from "passport";
 import expressSession from "express-session";
+import "./app/config/pasport";
 
 const app = Express();
 app.use(

@@ -55,3 +55,17 @@ passport.use(
     }
   )
 );
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+passport.serializeUser((user: any, done: (err: any, id?: unknown) => void) => {
+  done(null, user?._id);
+});
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+passport.deserializeUser(async (id: string, done: any) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
+});

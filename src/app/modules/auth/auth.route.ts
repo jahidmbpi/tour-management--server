@@ -20,6 +20,10 @@ router.get("/google", (req: Request, res: Response) => {
   passport.authenticate("google", { scope: ["profile", "email"] })(req, res);
 });
 
-router.get("/google/callback", authControllers.googleCallback);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  authControllers.googleCallback
+);
 
 export const AuthRoute = router;
