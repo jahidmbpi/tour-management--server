@@ -6,6 +6,9 @@ import sendResponse from "../../utilse/sendResponse";
 import { Request, Response, NextFunction } from "express";
 import { authService } from "./auth.service";
 import { setAuthCookie } from "../../utilse/setCookie";
+import AppError from "../../errorHalper/AppError";
+import { createUserToken } from "../../utilse/userTockent";
+import { envVars } from "../../config/env";
 
 const credentialLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -60,24 +63,48 @@ const resetPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const oldPassword = req.body.oldPassword;
     const newPassword = req.body.newPassword;
-    const decodedTocken = req.user;
-    const newUpdatedPassword = await authService.resetPassword(
+
+    if (!req.user) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized request");
+    }
+
+    const decodedToken = req.user;
+
+    const updatedPassword = await authService.resetPassword(
       oldPassword,
       newPassword,
-      decodedTocken
+      decodedToken // এখন TypeScript satisfied
     );
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      massage: "User logged out successfully",
-      data: null,
+      massage: "Password updated successfully",
+      data: updatedPassword,
     });
   }
 );
+
+const googleCallback = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, "User not found");
+    }
+
+    const tokenInfo = await createUserToken(user);
+
+    setAuthCookie(res, tokenInfo);
+
+    res.redirect(envVars.FRONTANT_URL);
+  }
+);
+
 export const authControllers = {
   credentialLogin,
   getnewAccessTocken,
   logOut,
   resetPassword,
+  googleCallback,
 };
