@@ -5,9 +5,19 @@ import { globalErrorhandelar } from "./app/middlewares/globalErrorHandelars/glob
 import notFound from "./app/middlewares/notFound/notFound";
 import router from "./routes";
 import cookieParssar from "cookie-parser";
+import passport from "passport";
+import expressSession from "express-session";
 
 const app = Express();
-
+app.use(
+  expressSession({
+    secret: "your secrect",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(Express.json());
 app.use(cros());
 app.use(cookieParssar());
