@@ -9,19 +9,45 @@ import { setAuthCookie } from "../../utilse/setCookie";
 import AppError from "../../errorHalper/AppError";
 import { createUserToken } from "../../utilse/userTockent";
 import { envVars } from "../../config/env";
+import passport from "passport";
 
 const credentialLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const loginInfo = await authService.credentialLogin(req.body);
-    setAuthCookie(res, {
-      accessToken: loginInfo.accesstocken,
-    });
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      massage: "User logged in successfully",
-      data: loginInfo,
-    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (!user) {
+        return next(err);
+      }
+      const usertocken = await createUserToken(user);
+      const { password: pass, ...rest } = user.toObject();
+
+      setAuthCookie(res, usertocken);
+      sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        massage: "User logged in successfully",
+        data: {
+          accesstocken: usertocken.accessToken,
+          refreshTocken: usertocken.refreshToken,
+          user: rest,
+        },
+      });
+    })(req, res, next);
+
+    // const loginInfo = await authService.credentialLogin(req.body);
+    // setAuthCookie(res, {
+    //   accessToken: loginInfo.accesstocken,
+    // });
+    // sendResponse(res, {
+    //   success: true,
+    //   statusCode: httpStatus.OK,
+    //   massage: "User logged in successfully",
+    //   data: loginInfo,
+    // });
   }
 );
 const getnewAccessTocken = catchAsync(
