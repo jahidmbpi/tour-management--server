@@ -87,6 +87,12 @@ const resetPassword = catchAsync(
 
 const googleCallback = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    let redirectTo = req.query.state ? (req.query.state as string) : "";
+
+    if (redirectTo.startsWith("/")) {
+      redirectTo = redirectTo.slice(1);
+    }
+
     const user = req.user;
 
     if (!user) {
@@ -97,7 +103,7 @@ const googleCallback = catchAsync(
 
     setAuthCookie(res, tokenInfo);
 
-    res.redirect(envVars.FRONTANT_URL);
+    res.redirect(`${envVars.FRONTANT_URL}/${redirectTo}`);
   }
 );
 

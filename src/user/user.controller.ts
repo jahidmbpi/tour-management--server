@@ -33,10 +33,15 @@ const getAlluser = catchAsync(
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const userId = req.params.id;
 
-  const verifTocken = req.user;
+  const decodedTocken = req.user;
   const paload = req.body;
+
+  if (!decodedTocken) {
+    return next(new Error("Unauthorized: Token is missing or invalid"));
+  }
+
   try {
-    const user = await userServicecs.updateUser(userId, paload, verifTocken);
+    const user = await userServicecs.updateUser(userId, paload, decodedTocken);
     res.status(hthpStatus.CREATED).json({
       success: true,
       massage: "user create success",
