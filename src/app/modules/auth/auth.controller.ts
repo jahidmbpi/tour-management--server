@@ -16,11 +16,11 @@ const credentialLogin = catchAsync(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     passport.authenticate("local", async (err: any, user: any, info: any) => {
       if (err) {
-        return next(err);
+        return next(new AppError(401, err));
       }
 
       if (!user) {
-        return next(err);
+        return next(new AppError(401, info.message));
       }
       const usertocken = await createUserToken(user);
       const { password: pass, ...rest } = user.toObject();

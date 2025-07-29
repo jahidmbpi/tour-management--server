@@ -28,7 +28,7 @@ passport.use(
         const IsGooleAuthenticated = isUserExist.auths.some(
           (providerObjects) => providerObjects.provider == "google"
         );
-        if (IsGooleAuthenticated) {
+        if (IsGooleAuthenticated && !isUserExist.password) {
           return done(null, false, {
             message:
               "you have Authenticated to google login. if you login with credentials then at frist log in with google and set password and gmail and then you can log in with email and password",
