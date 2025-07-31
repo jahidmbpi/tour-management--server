@@ -4,11 +4,12 @@ import cros from "cors";
 import { globalErrorhandelar } from "./app/middlewares/globalErrorHandelars/globalErrorHandelars";
 import notFound from "./app/middlewares/notFound/notFound";
 import router from "./routes";
-import cookieParssar from "cookie-parser";
+
 import passport from "passport";
 import expressSession from "express-session";
 import "./app/config/pasport";
 import { envVars } from "./app/config/env";
+import cookieParser from "cookie-parser";
 
 const app = Express();
 app.use(
@@ -22,7 +23,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(Express.json());
 app.use(cros());
-app.use(cookieParssar());
+app.use(cookieParser());
 
 app.use("/api/v1", router);
 

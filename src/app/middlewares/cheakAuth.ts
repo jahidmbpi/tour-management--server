@@ -9,13 +9,12 @@ import { User } from "../../user/user.model";
 export const checkAuth = (...allowedRoles: Role[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const authHeader = req.headers.authorization;
+      console.log(req.headers);
+      const accessToken = req.headers.authorization;
 
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        throw new AppError(401, "Access token is missing or malformed");
+      if (!accessToken) {
+        throw new AppError(403, "No Token Recieved");
       }
-
-      const accessToken = authHeader.split(" ")[1];
 
       if (!envVars.JWT_ACCESS_SECRET) {
         throw new AppError(500, "JWT secret is not configured");
@@ -29,9 +28,8 @@ export const checkAuth = (...allowedRoles: Role[]) => {
       const isUserExist = await User.findOne({
         email: verifyToken.email,
       }).lean();
-
       if (!isUserExist) {
-        throw new AppError(httpStatus.BAD_REQUEST, "User doesn't exist");
+        throw new AppError(httpStatus.BAD_REQUEST, "User does not exist");
       }
 
       if (isUserExist.isActive === isActive.BLOCKED) {
