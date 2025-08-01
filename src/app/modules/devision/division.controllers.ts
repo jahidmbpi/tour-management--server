@@ -18,17 +18,22 @@ const createDivision = async (
   }
 };
 
-// const getAllDivision = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   try {
-//     console.log("cretae division");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+const getAllDivision = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const result = await divisionServices.getAllDivision();
+    res.status(hthpStatus.OK).json({
+      success: true,
+      massage: "all division find success",
+      allDivision: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // const updateDivision = async (
 //   req: Request,
@@ -54,7 +59,7 @@ const createDivision = async (
 // };
 export const divisionController = {
   createDivision,
-  // getAllDivision,
+  getAllDivision,
   // updateDivision,
   // deleteDivision,
 };

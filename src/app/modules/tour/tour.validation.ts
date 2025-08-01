@@ -8,7 +8,7 @@ export const createTourZodSchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   tourType: z.string().optional(),
-  division: z.string().optional,
+  division: z.string().optional(),
   minAge: z.number().optional(),
   maxGuest: z.number().optional(),
   amenities: z.array(z.string()).optional(),
@@ -27,7 +27,7 @@ export const updateTourZodSchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   tourType: z.string().optional(),
-  division: z.string().optional,
+  division: z.string().optional(),
   minAge: z.number().optional(),
   maxGuest: z.number().optional(),
   amenities: z.array(z.string()).optional(),
@@ -38,6 +38,7 @@ export const updateTourZodSchema = z.object({
   arrivalLocation: z.string().optional(),
 });
 
-export const cretaeTourTypeZodSchema = z.object({
-  name: z.string(),
+// Typo fix: "cretae" → "create"
+export const createTourTypeZodSchema = z.object({
+  name: z.string().nonempty("Tour type name is required"),
 });

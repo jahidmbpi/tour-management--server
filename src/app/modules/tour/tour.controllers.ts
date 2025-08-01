@@ -1,12 +1,56 @@
 import httpStatus from "http-status";
 import { Request, Response, NextFunction } from "express";
+import { tourServices } from "./tour.services";
+import sendResponse from "../../utilse/sendResponse";
 
-const createTour = (req: Request, res: Response, next: NextFunction) => {
+const createTour = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const result = await tourServices.createTour(req.body);
+
     res.status(httpStatus.CREATED).json({
       success: true,
       massage: "user create success",
-      creteTour: null,
+      creteTour: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const getAllTour = async (req: Request, res: Response, next: NextFunction) => {
+  const result = await tourServices.getAllTur();
+  try {
+    res.status(httpStatus.OK).json({
+      success: true,
+      massage: "user create success",
+      allTour: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const updateTour = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+    const Result = await tourServices.updateTour(id, req.body);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      massage: "Tour updated successfully",
+      data: Result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const deleteTour = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+    const result = await tourServices.deleteTour(id);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      massage: "Tour deleted successfully",
+      data: result,
     });
 
     console.log("cretae tour");
@@ -14,48 +58,28 @@ const createTour = (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
-// const getAllTour = (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     res.status(hthpStatus.CREATED).json({
-//       success: true,
-//       massage: "user create success",
-//       creteTour: null,
-//     });
 
-//     console.log("cretae tour");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// const updateTour = (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     res.status(hthpStatus.CREATED).json({
-//       success: true,
-//       massage: "user create success",
-//       creteTour: null,
-//     });
+const createTourType = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const result = await tourServices.cretaeTourType(req.body);
 
-//     console.log("cretae tour");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// const deleteTour = (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     res.status(hthpStatus.CREATED).json({
-//       success: true,
-//       massage: "user create success",
-//       creteTour: null,
-//     });
-
-//     console.log("cretae tour");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    res.status(httpStatus.CREATED).json({
+      success: true,
+      message: "tour type create successfully",
+      tourType: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const tourController = {
   createTour,
-  //   getAllTour,
-  //   updateTour,
-  //   deleteTour,
+  getAllTour,
+  createTourType,
+  updateTour,
+  deleteTour,
 };

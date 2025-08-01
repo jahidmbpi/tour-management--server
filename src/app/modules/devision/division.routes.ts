@@ -13,7 +13,7 @@ router.post(
   divisionController.createDivision
 );
 
-// router.get("/", divisionController.getAllDivision);
+router.get("/", divisionController.getAllDivision);
 // router.patch(
 //   "/:id",
 //   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
