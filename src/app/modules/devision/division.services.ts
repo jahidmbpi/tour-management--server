@@ -44,11 +44,25 @@ const updateDivision = async (id: string, payload: Partial<IDivission>) => {
     throw new Error("this name already exsit ");
   }
 
-  const upadtedDivision = await Division.findByIdAndUpdate(id, payload);
+  const upadtedDivision = await Division.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
   return upadtedDivision;
 };
+
+const deleteDivision = async (id: string) => {
+  const isDivisionExsit = await Division.findById(id);
+  if (!isDivisionExsit) {
+    throw new Error("can not find any division");
+  }
+
+  await Division.findByIdAndDelete(id);
+  return { message: "Division deleted successfully", id };
+};
+
 export const divisionServices = {
   createDivision,
   getAllDivision,
   updateDivision,
+  deleteDivision,
 };

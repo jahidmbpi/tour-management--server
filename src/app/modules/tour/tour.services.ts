@@ -1,5 +1,5 @@
-import { ITour, ITourType } from "./tour.interface";
-import { Tour, TourType } from "./tour.model";
+import { ITour } from "./tour.interface";
+import { Tour } from "./tour.model";
 
 const createTour = async (payload: Partial<ITour>) => {
   const exsitingTour = await Tour.findOne({ title: payload.title });
@@ -50,21 +50,10 @@ const deleteTour = async (id: string) => {
   return deletetour;
 };
 
-const cretaeTourType = async (payload: Partial<ITourType>) => {
-  const tourTypeExsit = await TourType.findOne({ name: payload.name });
-
-  if (tourTypeExsit) {
-    throw new Error("this tour type alreday exsit");
-  }
-
-  const tourtype = await TourType.create(payload);
-  return tourtype;
-};
-
 export const tourServices = {
   createTour,
   getAllTur,
-  cretaeTourType,
+
   updateTour,
   deleteTour,
 };

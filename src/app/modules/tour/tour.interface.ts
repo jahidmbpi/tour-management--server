@@ -20,7 +20,3 @@ export interface ITour {
   departureLocation: string;
   arrivalLocation: string;
 }
-
-export interface ITourType {
-  name: string;
-}

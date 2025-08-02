@@ -52,34 +52,14 @@ const deleteTour = async (req: Request, res: Response, next: NextFunction) => {
       massage: "Tour deleted successfully",
       data: result,
     });
-
-    console.log("cretae tour");
   } catch (error) {
     next(error);
   }
 };
 
-const createTourType = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const result = await tourServices.cretaeTourType(req.body);
-
-    res.status(httpStatus.CREATED).json({
-      success: true,
-      message: "tour type create successfully",
-      tourType: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 export const tourController = {
   createTour,
   getAllTour,
-  createTourType,
   updateTour,
   deleteTour,
 };

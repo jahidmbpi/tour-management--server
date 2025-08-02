@@ -3,11 +3,7 @@ import { tourController } from "./tour.controllers";
 import { checkAuth } from "../../middlewares/cheakAuth";
 import { Role } from "../../../user/user.interface";
 import { validateRequest } from "../../utilse/validateRequest";
-import {
-  createTourTypeZodSchema,
-  createTourZodSchema,
-  updateTourZodSchema,
-} from "./tour.validation";
+import { createTourZodSchema, updateTourZodSchema } from "./tour.validation";
 
 const router = Router();
 
@@ -24,13 +20,6 @@ router.get(
   tourController.getAllTour
 );
 
-router.post(
-  "/create-tour-type",
-  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
-  validateRequest(createTourTypeZodSchema),
-  tourController.createTourType
-);
-
 router.patch(
   "/update-tour/:id",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
@@ -43,5 +32,6 @@ router.delete(
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   tourController.deleteTour
 );
+//  tour type
 
 export const tourRoutes = router;

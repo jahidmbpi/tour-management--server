@@ -1,6 +1,8 @@
 import hthpStatus from "http-status";
 import { NextFunction, Request, Response } from "express";
 import { divisionServices } from "./division.services";
+import catchAsync from "../../utilse/catchAsync";
+import sendResponse from "../../utilse/sendResponse";
 const createDivision = async (
   req: Request,
   res: Response,
@@ -35,31 +37,39 @@ const getAllDivision = async (
   }
 };
 
-// const updateDivision = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   try {
-//     console.log("cretae division");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// const deleteDivision = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   try {
-//     console.log("cretae division");
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+const updateDivision = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const result = await divisionServices.updateDivision(id, req.body);
+    sendResponse(res, {
+      success: true,
+      statusCode: hthpStatus.OK,
+      massage: " division updated succesfully",
+      data: result,
+    });
+  }
+);
+
+const deleteDivision = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+
+    const result = await divisionServices.deleteDivision(id);
+
+    res.status(hthpStatus.OK).json({
+      success: true,
+      statusCode: hthpStatus.OK,
+      message: "Division deleted successfully",
+      data: result,
+    });
+  }
+);
+
 export const divisionController = {
   createDivision,
   getAllDivision,
-  // updateDivision,
-  // deleteDivision,
+  updateDivision,
+  deleteDivision,
 };
