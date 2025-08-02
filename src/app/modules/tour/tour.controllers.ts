@@ -17,7 +17,8 @@ const createTour = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 const getAllTour = async (req: Request, res: Response, next: NextFunction) => {
-  const result = await tourServices.getAllTur();
+  const query = req.query;
+  const result = await tourServices.getAllTur(query as Record<string, string>);
   try {
     res.status(httpStatus.OK).json({
       success: true,

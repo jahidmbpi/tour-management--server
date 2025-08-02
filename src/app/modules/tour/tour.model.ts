@@ -34,7 +34,7 @@ const tourSchema = new Schema<ITour>(
 tourSchema.pre("save", async function (next) {
   if (this.isModified("title")) {
     const baseSlug = this.title.toLowerCase().split(" ").join("-");
-    const slugBase = `${baseSlug}-division`;
+    const slugBase = `${baseSlug}`;
 
     let counter = 1;
     let uniqueSlug = slugBase;
@@ -54,7 +54,7 @@ tourSchema.pre("findOneAndUpdate", async function (next) {
 
   if (tour.title) {
     const baseSlug = tour.title.toLowerCase().split(" ").join("-");
-    const slugBase = `${baseSlug}-division`;
+    const slugBase = `${baseSlug}`;
 
     let counter = 1;
     let uniqueSlug = slugBase;

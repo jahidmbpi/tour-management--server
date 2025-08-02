@@ -7,22 +7,25 @@ const createTour = async (payload: Partial<ITour>) => {
   if (exsitingTour) {
     throw new Error("a tour with his titile alreday exsit");
   }
-  const baseSlug = payload.title?.toLocaleLowerCase().split(" ").join("-");
-  let slug = `${baseSlug}-division`;
-  let counter = 0;
-  while (await Tour.exists({ slug })) {
-    slug = `${slug}-${counter++}`;
-  }
-  payload.slug = slug;
 
   const tour = await Tour.create(payload);
   return tour;
 };
 
-const getAllTur = async () => {
-  const tour = await Tour.find({});
+const getAllTur = async (query: Record<string, string>) => {
+  const searchterm = query.searchterm || "";
+  console.log(searchterm);
+  const searchAbleField = ["title", "description", "location"];
+  const searchQuery = {
+    $or: searchAbleField.map((field) => ({
+      [field]: { $regex: searchterm, $options: "i" },
+    })),
+  };
+  console.log(searchQuery);
 
-  const totalTour = await Tour.countDocuments();
+  const tour = await Tour.find(searchQuery);
+
+  const totalTour = await Tour.countDocuments(searchQuery);
   return {
     data: tour,
     meta: { totalTour },
@@ -53,7 +56,6 @@ const deleteTour = async (id: string) => {
 export const tourServices = {
   createTour,
   getAllTur,
-
   updateTour,
   deleteTour,
 };
