@@ -19,10 +19,11 @@ const createTour = async (req: Request, res: Response, next: NextFunction) => {
 const getAllTour = async (req: Request, res: Response, next: NextFunction) => {
   const query = req.query;
   const result = await tourServices.getAllTur(query as Record<string, string>);
+  console.log(result);
   try {
     res.status(httpStatus.OK).json({
       success: true,
-      massage: "user create success",
+      massage: "all tour get success",
       allTour: result,
     });
   } catch (error) {

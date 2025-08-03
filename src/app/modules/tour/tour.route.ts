@@ -15,7 +15,7 @@ router.post(
 );
 
 router.get(
-  "/",
+  "/allTour",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   tourController.getAllTour
 );
