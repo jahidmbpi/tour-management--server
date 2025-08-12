@@ -4,7 +4,6 @@ import cros from "cors";
 import { globalErrorhandelar } from "./app/middlewares/globalErrorHandelars/globalErrorHandelars";
 import notFound from "./app/middlewares/notFound/notFound";
 import router from "./routes";
-
 import passport from "passport";
 import expressSession from "express-session";
 import "./app/config/pasport";

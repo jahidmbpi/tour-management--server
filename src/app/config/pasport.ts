@@ -7,8 +7,8 @@ import {
 } from "passport-google-oauth20";
 
 import { envVars } from "./env";
-import { User } from "../../user/user.model";
-import { Role } from "../../user/user.interface";
+import { User } from "../modules/user/user.model";
+import { Role } from "../modules/user/user.interface";
 import { Strategy as localStratagy } from "passport-local";
 
 passport.use(

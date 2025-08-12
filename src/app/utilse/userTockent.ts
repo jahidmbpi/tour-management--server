@@ -1,9 +1,9 @@
 import httpStatus from "http-status";
-import { isActive, IUser } from "../../user/user.interface";
+import { isActive, IUser } from "../modules/user/user.interface";
 import { envVars } from "../config/env";
 import AppError from "../errorHalper/AppError";
 import { genaretetocken, verifyTocken } from "./jwt";
-import { User } from "../../user/user.model";
+import { User } from "../modules/user/user.model";
 import { JwtPayload } from "jsonwebtoken";
 
 export const createUserToken = (user: Partial<IUser>) => {

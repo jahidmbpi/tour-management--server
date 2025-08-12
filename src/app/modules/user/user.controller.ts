@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 
 import hthpStatus from "http-status";
 import userServicecs from "./user.services";
-import catchAsync from "../app/utilse/catchAsync";
-import sendResponse from "../app/utilse/sendResponse";
+import catchAsync from "../../utilse/catchAsync";
+import sendResponse from "../../utilse/sendResponse";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

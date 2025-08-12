@@ -3,13 +3,12 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import httpStatus from "http-status";
 import AppError from "../errorHalper/AppError";
 import { envVars } from "../config/env";
-import { Role, isActive } from "../../user/user.interface";
-import { User } from "../../user/user.model";
+import { Role, isActive } from "../modules/user/user.interface";
+import { User } from "../modules/user/user.model";
 
 export const checkAuth = (...allowedRoles: Role[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.headers);
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {

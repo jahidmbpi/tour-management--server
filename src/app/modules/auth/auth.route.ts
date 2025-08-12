@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { authControllers } from "./auth.controller";
 import { checkAuth } from "../../middlewares/cheakAuth";
 
-import { Role } from "../../../user/user.interface";
+import { Role } from "../user/user.interface";
 import passport from "passport";
 
 const router = Router();

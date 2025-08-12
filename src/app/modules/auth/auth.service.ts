@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import bcryptjs from "bcryptjs";
 import httpStatus from "http-status";
-import { isActive, IUser } from "../../../user/user.interface";
+import { isActive, IUser } from "../user/user.interface";
 import AppError from "../../errorHalper/AppError";
-import { User } from "../../../user/user.model";
+import { User } from "../user/user.model";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { genaretetocken, verifyTocken } from "../../utilse/jwt";
 import { envVars } from "../../config/env";

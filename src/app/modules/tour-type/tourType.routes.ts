@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { checkAuth } from "../../middlewares/cheakAuth";
-import { Role } from "../../../user/user.interface";
+import { Role } from "../user/user.interface";
 import { createTourTypeZodSchema } from "../tour/tour.validation";
 import { validateRequest } from "../../utilse/validateRequest";
 import { tourTypeController } from "./tourType.controllers";

@@ -1,5 +1,5 @@
-import { IAuthProvider, IUser, Role } from "../../user/user.interface";
-import { User } from "../../user/user.model";
+import { IAuthProvider, IUser, Role } from "../modules/user/user.interface";
+import { User } from "../modules/user/user.model";
 import { envVars } from "../config/env";
 import bcryptjs from "bcryptjs";
 

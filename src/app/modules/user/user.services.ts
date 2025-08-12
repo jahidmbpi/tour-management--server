@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import AppError from "../app/errorHalper/AppError";
+import AppError from "../../errorHalper/AppError";
 import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 import bcryptjs from "bcryptjs";

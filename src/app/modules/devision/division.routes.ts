@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { divisionController } from "./division.controllers";
 import { checkAuth } from "../../middlewares/cheakAuth";
-import { Role } from "../../../user/user.interface";
+import { Role } from "../user/user.interface";
 import { validateRequest } from "../../utilse/validateRequest";
 import {
   cretaeDivisionZodSchema,
