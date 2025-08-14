@@ -5,6 +5,8 @@ import { Booking } from "../booking/booking.model";
 import { PAYMENT_STATUS } from "./payment.interface";
 import { Payment } from "./payment.model";
 import AppError from "../../errorHalper/AppError";
+import { sslService } from "../sslcomarz/sslcommarz.services";
+import { ISslcomarz } from "../sslcomarz/sslCommarz.interface";
 
 const successPayment = async (query: Record<string, string>) => {
   console.log(query);
@@ -148,8 +150,42 @@ const canceldPayment = async (query: Record<string, string>) => {
     throw error;
   }
 };
+const initPayment = async (bookingId: string) => {
+  const payment = await Payment.findOne({ booking: bookingId });
+
+  if (!payment) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "Payment Not Found. You have not booked this tour"
+    );
+  }
+
+  const booking = await Booking.findById(payment.booking);
+
+  const userAddress = (booking?.user as any).address;
+  const userEmail = (booking?.user as any).email;
+  const userPhoneNumber = (booking?.user as any).phone;
+  const userName = (booking?.user as any).name;
+
+  const sslPayload: ISslcomarz = {
+    address: userAddress,
+    email: userEmail,
+    phoneNumber: userPhoneNumber,
+    name: userName,
+    amount: payment.amount,
+    transectionId: payment.transectionId,
+  };
+
+  const sslPayment = await sslService.paymentInit(sslPayload);
+
+  return {
+    paymentUrl: sslPayment.GatewayPageURL,
+  };
+};
+
 export const paymentServices = {
   successPayment,
   failedPayment,
   canceldPayment,
+  initPayment,
 };

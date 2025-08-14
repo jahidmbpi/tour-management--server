@@ -53,6 +53,6 @@ const paymentInit = async (payload: ISslcomarz) => {
   }
 };
 
-export const paymentinit = {
+export const sslService = {
   paymentInit,
 };

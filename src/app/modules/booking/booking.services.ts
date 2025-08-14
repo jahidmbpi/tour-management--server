@@ -9,7 +9,7 @@ import { PAYMENT_STATUS } from "../payment/payment.interface";
 import { Tour } from "../tour/tour.model";
 
 import { ISslcomarz } from "../sslcomarz/sslCommarz.interface";
-import { paymentinit } from "../sslcomarz/sslcommarz.services";
+import { sslService } from "../sslcomarz/sslcommarz.services";
 
 const getTransectionId = () => {
   return `tran_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
@@ -90,7 +90,7 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
       phoneNumber: (updatedBooking?.user as any).phone,
     };
 
-    const sslpayment = await paymentinit.paymentInit(sslpayload);
+    const sslpayment = await sslService.paymentInit(sslpayload);
 
     await sessation.commitTransaction();
     sessation.endSession();

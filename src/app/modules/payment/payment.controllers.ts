@@ -3,6 +3,8 @@ import catchAsync from "../../utilse/catchAsync";
 import { paymentServices } from "./payment.services";
 import { envVars } from "../../config/env";
 
+import sendResponse from "../../utilse/sendResponse";
+
 const successPayment = catchAsync(async (req: Request, res: Response) => {
   const query = req.query;
   console.log("controller", query.transectionId);
@@ -46,8 +48,20 @@ const cenceleddPayment = catchAsync(async (req: Request, res: Response) => {
     );
   }
 });
+const initPayment = catchAsync(async (req: Request, res: Response) => {
+  const bookingId = req.params.bookingId;
+  const result = await paymentServices.initPayment(bookingId as string);
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    massage: "Payment done successfully",
+    data: result,
+  });
+});
+
 export const paymentController = {
   successPayment,
   faildPayment,
   cenceleddPayment,
+  initPayment,
 };
