@@ -8,6 +8,7 @@ import sendResponse from "../../utilse/sendResponse";
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await userServicecs.createUser(req.body);
+    console.log(user);
     res.status(hthpStatus.CREATED).json({
       success: true,
       massage: "user create success",

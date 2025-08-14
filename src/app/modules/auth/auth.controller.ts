@@ -22,6 +22,7 @@ const credentialLogin = catchAsync(
       if (!user) {
         return next(new AppError(401, info.message));
       }
+
       const usertocken = await createUserToken(user);
       const { password: pass, ...rest } = user.toObject();
 

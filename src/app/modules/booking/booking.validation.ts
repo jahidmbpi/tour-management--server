@@ -1,9 +1,11 @@
 import z from "zod";
+import { BOOKING_STATUS } from "./booking.interface";
 
 export const bookingZodSchema = z.object({
-  user: z.string({ message: "user id must be string" }),
   tour: z.string({ message: "tour id must be string" }),
-  payments: z.string({ message: "tour id must be string" }),
-  status: z.string(),
-  geustCount: z.number(),
+  geustCount: z.number().int().positive(),
+});
+
+export const updateBookingZodSchema = z.object({
+  status: z.enum(Object.values(BOOKING_STATUS)),
 });

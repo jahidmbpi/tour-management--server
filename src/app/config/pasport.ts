@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import bcryptjs from "bcryptjs";
 import passport from "passport";
 import {
@@ -5,46 +6,70 @@ import {
   Profile,
   VerifyCallback,
 } from "passport-google-oauth20";
-
-import { envVars } from "./env";
+import { Strategy as LocalStrategy } from "passport-local";
+import { isActive, Role } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
-import { Role } from "../modules/user/user.interface";
-import { Strategy as localStratagy } from "passport-local";
+import { envVars } from "./env";
 
 passport.use(
-  new localStratagy(
+  new LocalStrategy(
     {
       usernameField: "email",
       passwordField: "password",
     },
-
     async (email: string, password: string, done) => {
       try {
         const isUserExist = await User.findOne({ email });
+        console.log(isUserExist);
+
         if (!isUserExist) {
-          return done(null, false, { message: "user dose not exist" });
+          return done("User does not exist");
         }
 
-        const IsGooleAuthenticated = isUserExist.auths.some(
+        // if (!isUserExist.isVerified) {
+        //   // throw new AppError(httpStatus.BAD_REQUEST, "User is not verified")
+        //   return done("User is not verified");
+        // }
+
+        if (
+          isUserExist.isActive === isActive.BLOCKED ||
+          isUserExist.isActive === isActive.INACTIVE
+        ) {
+          // throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
+          return done(`User is ${isUserExist.isActive}`);
+        }
+        if (isUserExist.isDeleted) {
+          // throw new AppError(httpStatus.BAD_REQUEST, "User is deleted")
+          return done("User is deleted");
+        }
+
+        const isGoogleAuthenticated = isUserExist.auths.some(
           (providerObjects) => providerObjects.provider == "google"
         );
-        if (IsGooleAuthenticated && !isUserExist.password) {
+
+        if (isGoogleAuthenticated && !isUserExist.password) {
           return done(null, false, {
             message:
-              "you have Authenticated to google login. if you login with credentials then at frist log in with google and set password and gmail and then you can log in with email and password",
+              "You have authenticated through Google. So if you want to login with credentials, then at first login with google and set a password for your Gmail and then you can login with email and password.",
           });
         }
-        const isPasswordMatch = await bcryptjs.compare(
+
+        // if (isGoogleAuthenticated) {
+        //     return done("You have authenticated through Google. So if you want to login with credentials, then at first login with google and set a password for your Gmail and then you can login with email and password.")
+        // }
+
+        const isPasswordMatched = await bcryptjs.compare(
           password as string,
           isUserExist.password as string
         );
 
-        if (!isPasswordMatch) {
-          return done(null, false, { message: "password dose not match" });
+        if (!isPasswordMatched) {
+          return done(null, false, { message: "Password does not match" });
         }
 
         return done(null, isUserExist);
       } catch (error) {
+        console.log(error);
         done(error);
       }
     }
@@ -59,23 +84,41 @@ passport.use(
       callbackURL: envVars.GOOGLE_CALLBACK_URL,
     },
     async (
-      accessTocken: string,
-      refreshTocken: string,
+      accessToken: string,
+      refreshToken: string,
       profile: Profile,
       done: VerifyCallback
     ) => {
       try {
         const email = profile.emails?.[0].value;
+
         if (!email) {
-          return done(null, false, {
-            massaage: "no email found",
-          });
+          return done(null, false, { mesaage: "No email found" });
         }
 
-        let user = await User.findOne({ email });
+        let isUserExist = await User.findOne({ email });
+        if (isUserExist && !isUserExist.isVerified) {
+          // throw new AppError(httpStatus.BAD_REQUEST, "User is not verified")
+          // done("User is not verified")
+          return done(null, false, { message: "User is not verified" });
+        }
 
-        if (!user) {
-          user = await User.create({
+        if (
+          isUserExist &&
+          (isUserExist.isActive === isActive.BLOCKED ||
+            isUserExist.isActive === isActive.INACTIVE)
+        ) {
+          // throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
+          done(`User is ${isUserExist.isActive}`);
+        }
+
+        if (isUserExist && isUserExist.isDeleted) {
+          return done(null, false, { message: "User is deleted" });
+          // done("User is deleted")
+        }
+
+        if (!isUserExist) {
+          isUserExist = await User.create({
             email,
             name: profile.displayName,
             picture: profile.photos?.[0].value,
@@ -89,25 +132,32 @@ passport.use(
             ],
           });
         }
-        return done(null, user);
+
+        return done(null, isUserExist);
       } catch (error) {
-        console.log(error, "google stratizy error ");
+        console.log("Google Strategy Error", error);
         return done(error);
       }
     }
   )
 );
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+// frontend localhost:5173/login?redirect=/booking -> localhost:5000/api/v1/auth/google?redirect=/booking -> passport -> Google OAuth Consent -> gmail login -> successful -> callback url localhost:5000/api/v1/auth/google/callback -> db store -> token
+
+// Bridge == Google -> user db store -> token
+//Custom -> email , password, role : USER, name... -> registration -> DB -> 1 User create
+//Google -> req -> google -> successful : Jwt Token : Role , email -> DB - Store -> token - api access
+
 passport.serializeUser((user: any, done: (err: any, id?: unknown) => void) => {
-  done(null, user?._id);
+  done(null, user._id);
 });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 passport.deserializeUser(async (id: string, done: any) => {
   try {
     const user = await User.findById(id);
     done(null, user);
   } catch (error) {
+    console.log(error);
     done(error);
   }
 });

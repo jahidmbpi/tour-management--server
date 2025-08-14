@@ -13,4 +13,5 @@ export interface IBooking {
   payments?: Types.ObjectId;
   geustCount: number;
   status: BOOKING_STATUS;
+  payment: Types.ObjectId;
 }

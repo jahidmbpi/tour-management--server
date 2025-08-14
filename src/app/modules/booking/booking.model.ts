@@ -3,9 +3,9 @@ import { BOOKING_STATUS, IBooking } from "./booking.interface";
 
 export const bookingSchema = new Schema<IBooking>(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     tour: { type: Schema.Types.ObjectId, ref: "Tour", required: true },
-    payments: { type: Schema.Types.ObjectId, ref: "Payment", required: true },
+    payment: { type: Schema.Types.ObjectId, ref: "Payment" },
     status: {
       type: String,
       enum: Object.values(BOOKING_STATUS),
