@@ -21,6 +21,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(Express.json());
+app.use(Express.urlencoded({ extended: true }));
 app.use(cros());
 app.use(cookieParser());
 

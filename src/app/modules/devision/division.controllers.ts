@@ -3,13 +3,19 @@ import { NextFunction, Request, Response } from "express";
 import { divisionServices } from "./division.services";
 import catchAsync from "../../utilse/catchAsync";
 import sendResponse from "../../utilse/sendResponse";
+import { IDivission } from "./division.interface";
+
 const createDivision = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const result = await divisionServices.createDivision(req.body);
+    const payload: IDivission = {
+      ...req.body,
+      thumbnail: req.file?.path,
+    };
+    const result = await divisionServices.createDivision(payload);
     res.status(hthpStatus.CREATED).json({
       success: true,
       massage: "division create successfully",
