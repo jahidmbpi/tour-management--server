@@ -15,6 +15,16 @@ router.post(
   checkAuth(...Object.values(Role)),
   authControllers.resetPassword
 );
+router.post(
+  "/change-password",
+  checkAuth(...Object.values(Role)),
+  authControllers.changePassword
+);
+router.post(
+  "/set-password",
+  checkAuth(...Object.values(Role)),
+  authControllers.setPassword
+);
 
 router.get("/google", (req: Request, res: Response) => {
   const redirect = req.query.redirect || "/";

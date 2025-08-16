@@ -10,6 +10,7 @@ import AppError from "../../errorHalper/AppError";
 import { createUserToken } from "../../utilse/userTockent";
 import { envVars } from "../../config/env";
 import passport from "passport";
+import { JwtPayload } from "jsonwebtoken";
 
 const credentialLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -111,6 +112,52 @@ const resetPassword = catchAsync(
     });
   }
 );
+const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+
+    if (!req.user) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized request");
+    }
+
+    const decodedToken = req.user;
+
+    const updatedPassword = await authService.changePassword(
+      oldPassword,
+      newPassword,
+      decodedToken // এখন TypeScript satisfied
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      massage: "Password updated successfully",
+      data: updatedPassword,
+    });
+  }
+);
+const setPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { password } = req.body;
+    const decodedToken = req.user as JwtPayload;
+    if (!req.user) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized request");
+    }
+
+    const updatedPassword = await authService.setPassword(
+      decodedToken?.userId,
+      password
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      massage: "Password updated successfully",
+      data: updatedPassword,
+    });
+  }
+);
 
 const googleCallback = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -140,4 +187,6 @@ export const authControllers = {
   logOut,
   resetPassword,
   googleCallback,
+  changePassword,
+  setPassword,
 };
