@@ -25,6 +25,8 @@ const tourSchema = new Schema<ITour>(
       required: true,
     },
     tourType: { type: Schema.Types.ObjectId, ref: "Tour", required: true },
+
+    deleteImage: { type: [String] },
   },
   {
     timestamps: true,

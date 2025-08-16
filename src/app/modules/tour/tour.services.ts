@@ -1,3 +1,4 @@
+import { deleteImageCloudenary } from "../../config/cloudenary.config";
 import { excludeField, searchAbleField } from "./tour.constant";
 import { ITour } from "./tour.interface";
 import { Tour } from "./tour.model";
@@ -62,7 +63,43 @@ const updateTour = async (id: string, payload: Partial<ITour>) => {
     throw new Error("can not find this tour");
   }
 
+  if (
+    payload.images &&
+    payload.images.length > 0 &&
+    isTourExist.images &&
+    isTourExist.images.length > 0
+  ) {
+    payload.images = [...payload.images, ...isTourExist.images];
+  }
+
+  if (
+    payload.deleteImage &&
+    payload.deleteImage.length > 0 &&
+    isTourExist.images &&
+    isTourExist.images.length > 0
+  ) {
+    const restDbImage = isTourExist.images.filter(
+      (imageUrl) => !payload.deleteImage?.includes(imageUrl)
+    );
+
+    const updatePayloadImage = (payload.images || [])
+      .filter((imageUrl) => !payload.deleteImage?.includes(imageUrl))
+      .filter((imageUrl) => !restDbImage?.includes(imageUrl));
+
+    payload.images = [...restDbImage, ...updatePayloadImage];
+  }
+
   const upadteTour = await Tour.findByIdAndUpdate(id, payload, { new: true });
+  if (
+    payload.deleteImage &&
+    payload.deleteImage.length > 0 &&
+    isTourExist.images &&
+    isTourExist.images.length > 0
+  ) {
+    await Promise.all(
+      payload.deleteImage.map((url) => deleteImageCloudenary(url))
+    );
+  }
   return upadteTour;
 };
 

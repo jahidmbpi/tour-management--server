@@ -22,6 +22,7 @@ router.get("/", divisionController.getAllDivision);
 router.patch(
   "/:id",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  multerUpload.single("file"),
   validateRequest(updateDivisionZodSchema),
   divisionController.updateDivision
 );

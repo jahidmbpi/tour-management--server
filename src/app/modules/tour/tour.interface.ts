@@ -19,4 +19,5 @@ export interface ITour {
   tourType: Types.ObjectId;
   departureLocation: string;
   arrivalLocation: string;
+  deleteImage?: string[];
 }

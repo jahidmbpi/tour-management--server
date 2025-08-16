@@ -2,10 +2,16 @@ import httpStatus from "http-status";
 import { Request, Response, NextFunction } from "express";
 import { tourServices } from "./tour.services";
 import sendResponse from "../../utilse/sendResponse";
+import { ITour } from "./tour.interface";
 
 const createTour = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await tourServices.createTour(req.body);
+    const payload: ITour = {
+      ...req.body,
+      images: (req.files as Express.Multer.File[]).map((file) => file.path),
+    };
+
+    const result = await tourServices.createTour(payload);
 
     res.status(httpStatus.CREATED).json({
       success: true,

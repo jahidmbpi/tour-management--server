@@ -4,12 +4,14 @@ import { checkAuth } from "../../middlewares/cheakAuth";
 import { Role } from "../user/user.interface";
 import { validateRequest } from "../../utilse/validateRequest";
 import { createTourZodSchema, updateTourZodSchema } from "./tour.validation";
+import { multerUpload } from "../../config/multer.config";
 
 const router = Router();
 
 router.post(
   "/create-tour",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  multerUpload.array("files"),
   validateRequest(createTourZodSchema),
   tourController.createTour
 );

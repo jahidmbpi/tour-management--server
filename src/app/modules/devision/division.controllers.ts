@@ -47,7 +47,11 @@ const updateDivision = catchAsync(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
-    const result = await divisionServices.updateDivision(id, req.body);
+    const payload: IDivission = {
+      ...req.body,
+      thumbnail: req.file?.path,
+    };
+    const result = await divisionServices.updateDivision(id, payload);
     sendResponse(res, {
       success: true,
       statusCode: hthpStatus.OK,

@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { string } from "zod";
 
 export const createTourZodSchema = z.object({
   title: z.string().optional(),
@@ -36,6 +36,7 @@ export const updateTourZodSchema = z.object({
   tourPlan: z.array(z.string()).optional(),
   departureLocation: z.string().optional(),
   arrivalLocation: z.string().optional(),
+  deleteImage: z.array(string()).optional(),
 });
 
 // Typo fix: "cretae" → "create"

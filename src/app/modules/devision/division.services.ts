@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import AppError from "../../errorHalper/AppError";
 import { IDivission } from "./division.interface";
 import { Division } from "./division.model";
+import { deleteImageCloudenary } from "../../config/cloudenary.config";
 
 const createDivision = async (payload: Partial<IDivission>) => {
   const isDivisionExsit = await Division.findOne({ name: payload.name });
@@ -39,6 +40,9 @@ const updateDivision = async (id: string, payload: Partial<IDivission>) => {
   const upadtedDivision = await Division.findByIdAndUpdate(id, payload, {
     new: true,
   });
+  if (payload.thumbnail && isDivisionExsit.thumbnail) {
+    await deleteImageCloudenary(isDivisionExsit.thumbnail);
+  }
   return upadtedDivision;
 };
 
