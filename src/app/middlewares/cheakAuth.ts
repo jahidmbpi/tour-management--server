@@ -39,6 +39,10 @@ export const checkAuth = (...allowedRoles: Role[]) => {
         throw new AppError(httpStatus.BAD_REQUEST, "User is deleted");
       }
 
+      if (!isUserExist.isVerified) {
+        throw new AppError(httpStatus.BAD_REQUEST, "User is deleted");
+      }
+
       const userRole = verifyToken.role;
 
       if (!allowedRoles.includes(userRole)) {

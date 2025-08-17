@@ -36,6 +36,7 @@ router.get("/google", (req: Request, res: Response) => {
 
 router.get(
   "/google/callback",
+  //failureRedirect  aikahne fromtant url hbe
   passport.authenticate("google", { failureRedirect: "/login" }),
   authControllers.googleCallback
 );

@@ -4,6 +4,8 @@ import hthpStatus from "http-status";
 import userServicecs from "./user.services";
 import catchAsync from "../../utilse/catchAsync";
 import sendResponse from "../../utilse/sendResponse";
+import { JwtPayload } from "jsonwebtoken";
+import AppError from "../../errorHalper/AppError";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -27,6 +29,23 @@ const getAlluser = catchAsync(
       success: true,
       statusCode: hthpStatus.OK,
       massage: " get all user  succesfully",
+      data: users,
+    });
+  }
+);
+const getMe = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedTocken = req.user as JwtPayload;
+
+    if (!decodedTocken.userId) {
+      throw new AppError(401, " you are  not authorized");
+    }
+    const users = await userServicecs.getMe(decodedTocken.userId);
+    sendResponse(res, {
+      success: true,
+      statusCode: hthpStatus.OK,
+      massage: "  your profile retrived succesfully",
       data: users,
     });
   }
@@ -57,4 +76,5 @@ export const userControlers = {
   createUser,
   getAlluser,
   updateUser,
+  getMe,
 };

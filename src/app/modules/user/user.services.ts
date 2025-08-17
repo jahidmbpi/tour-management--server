@@ -39,6 +39,10 @@ const getAllUser = async () => {
   const users = await User.find({});
   return users;
 };
+const getMe = async (userId: string) => {
+  const users = await User.findById(userId).select("-password");
+  return users;
+};
 
 const updateUser = async (
   userId: string,
@@ -78,5 +82,6 @@ const userServicecs = {
   createUser,
   getAllUser,
   updateUser,
+  getMe,
 };
 export default userServicecs;
