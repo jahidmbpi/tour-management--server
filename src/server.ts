@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 import { envVars } from "./app/config/env";
 import { seedSuperAdmin } from "./app/utilse/seedSuperAdmin";
+import { connectRadis } from "./app/config/redis.config";
 
 let server: Server;
 
@@ -24,6 +24,7 @@ const startServer = async () => {
 (async () => {
   await startServer();
   await seedSuperAdmin();
+  await connectRadis();
 })();
 
 // process.on("unhandledRejection", (err) => {

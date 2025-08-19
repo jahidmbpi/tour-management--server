@@ -40,6 +40,12 @@ interface ENVConfig {
     SMTP_USER: string;
     SMTP_FROM: string;
   };
+  RADIS: {
+    RADIS_HOST: string;
+    RADIS_PORT: string;
+    RADIS_USER_NAME: string;
+    RADIS_PASSWORD: string;
+  };
 }
 
 const LoadEnvVariale = (): ENVConfig => {
@@ -77,6 +83,10 @@ const LoadEnvVariale = (): ENVConfig => {
     "SMTP_PORT",
     "SMTP_USER",
     "SMTP_FROM",
+    "RADIS_HOST",
+    "RADIS_PORT",
+    "RADIS_USER_NAME",
+    "RADIS_PASSWORD",
   ];
   requiredvariable.forEach((key) => {
     if (!process.env[key]) {
@@ -123,6 +133,12 @@ const LoadEnvVariale = (): ENVConfig => {
       SMTP_PORT: process.env.SMTP_PORT as string,
       SMTP_USER: process.env.SMTP_USER as string,
       SMTP_FROM: process.env.SMTP_FROM as string,
+    },
+    RADIS: {
+      RADIS_HOST: process.env.RADIS_HOST as string,
+      RADIS_PORT: process.env.RADIS_PORT as string,
+      RADIS_USER_NAME: process.env.RADIS_USER_NAME as string,
+      RADIS_PASSWORD: process.env.RADIS_PASSWORD as string,
     },
   };
 };

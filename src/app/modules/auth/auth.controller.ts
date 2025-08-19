@@ -89,26 +89,15 @@ const logOut = catchAsync(
 
 const resetPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
-
-    if (!req.user) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized request");
-    }
-
     const decodedToken = req.user;
 
-    const updatedPassword = await authService.resetPassword(
-      oldPassword,
-      newPassword,
-      decodedToken // এখন TypeScript satisfied
-    );
+    await authService.resetPassword(req.body, decodedToken as JwtPayload);
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      massage: "Password updated successfully",
-      data: updatedPassword,
+      massage: "Password Changed Successfully",
+      data: null,
     });
   }
 );
@@ -159,6 +148,21 @@ const setPassword = catchAsync(
   }
 );
 
+const forgotPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    const updatedPassword = await authService.forgotPassword(email);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      massage: "email sent successfully",
+      data: updatedPassword,
+    });
+  }
+);
+
 const googleCallback = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let redirectTo = req.query.state ? (req.query.state as string) : "";
@@ -189,4 +193,5 @@ export const authControllers = {
   googleCallback,
   changePassword,
   setPassword,
+  forgotPassword,
 };
