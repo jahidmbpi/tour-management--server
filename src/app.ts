@@ -22,7 +22,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
-app.use(cros());
+app.use(
+  cros({
+    origin: envVars.FRONTANT_URL,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
 app.use("/api/v1", router);
