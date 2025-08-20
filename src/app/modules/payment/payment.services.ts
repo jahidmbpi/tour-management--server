@@ -7,6 +7,10 @@ import { Payment } from "./payment.model";
 import AppError from "../../errorHalper/AppError";
 import { sslService } from "../sslcomarz/sslcommarz.services";
 import { ISslcomarz } from "../sslcomarz/sslCommarz.interface";
+import { genaretePdf, IInvoice } from "../../utilse/invoice";
+import { ITour } from "../tour/tour.interface";
+import { IUser } from "../user/user.interface";
+import sendEmail from "../../utilse/sendmail";
 
 const successPayment = async (query: Record<string, string>) => {
   console.log(query);
@@ -39,6 +43,34 @@ const successPayment = async (query: Record<string, string>) => {
       .session(session)
       .populate("user", "name email phone address")
       .populate("tour", "title costFrom");
+    if (!bookingUpdate) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Booking not found");
+    }
+
+    const invoiceData: IInvoice = {
+      bookingDate: bookingUpdate?.createdAt || new Date(),
+      totalAmount: updatedPayment.amount,
+      geustCount: bookingUpdate.geustCount,
+      tourTitle: (bookingUpdate?.tour as unknown as ITour).title,
+      transectionId: updatedPayment.transectionId,
+      userName: (bookingUpdate.user as unknown as IUser).name,
+    };
+
+    const pdfBuffer = await genaretePdf(invoiceData);
+
+    sendEmail({
+      to: (bookingUpdate.user as unknown as IUser).email,
+      subject: "your booking invoice ",
+      template: "invoice",
+      templateData: pdfBuffer as Record<string, any>,
+      attachments: [
+        {
+          filename: "invoice.pdf",
+          content: JSON.stringify(pdfBuffer, null, 2),
+          contentType: "application/pdf",
+        },
+      ],
+    });
 
     await session.commitTransaction();
     session.endSession();

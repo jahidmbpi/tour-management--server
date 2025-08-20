@@ -20,7 +20,6 @@ passport.use(
     async (email: string, password: string, done) => {
       try {
         const isUserExist = await User.findOne({ email });
-        console.log(isUserExist);
 
         if (!isUserExist) {
           return done("User does not exist");
@@ -58,7 +57,6 @@ passport.use(
 
         return done(null, isUserExist);
       } catch (error) {
-        console.log(error);
         done(error);
       }
     }
@@ -112,7 +110,7 @@ passport.use(
             auths: [
               {
                 provider: "google",
-                providerId: profile.id,
+                providerID: profile.id,
               },
             ],
           });
@@ -120,7 +118,6 @@ passport.use(
 
         return done(null, isUserExist);
       } catch (error) {
-        console.log("Google Strategy Error", error);
         return done(error);
       }
     }
@@ -142,7 +139,6 @@ passport.deserializeUser(async (id: string, done: any) => {
     const user = await User.findById(id);
     done(null, user);
   } catch (error) {
-    console.log(error);
     done(error);
   }
 });
