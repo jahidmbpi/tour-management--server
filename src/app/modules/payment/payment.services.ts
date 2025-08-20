@@ -15,6 +15,7 @@ import sendEmail from "../../utilse/sendmail";
 const successPayment = async (query: Record<string, string>) => {
   console.log(query);
 
+  console.log("hello  payment");
   const session = await Booking.startSession();
   session.startTransaction();
 

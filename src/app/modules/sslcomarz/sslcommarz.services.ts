@@ -42,7 +42,7 @@ const paymentInit = async (payload: ISslcomarz) => {
     const response = await axios({
       method: "POST",
       url: envVars.SSL.SSL_PAYMENT_API,
-      data: qs.stringify(data), // Encode as form data
+      data: qs.stringify(data),
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
 

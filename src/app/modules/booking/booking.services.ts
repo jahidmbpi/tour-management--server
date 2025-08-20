@@ -99,7 +99,7 @@ const createBooking = async (payload: Partial<IBooking>, userId: string) => {
   } catch (error) {
     await sessation.abortTransaction();
     sessation.endSession();
-    // throw new AppError(httpStatus.BAD_REQUEST, error) ❌❌
+
     throw error;
   }
 };

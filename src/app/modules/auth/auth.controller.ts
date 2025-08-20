@@ -178,6 +178,7 @@ const googleCallback = catchAsync(
     }
 
     const tokenInfo = await createUserToken(user);
+    console.log(tokenInfo);
 
     setAuthCookie(res, tokenInfo);
 
