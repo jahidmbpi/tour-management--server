@@ -7,10 +7,11 @@ import { Payment } from "./payment.model";
 import AppError from "../../errorHalper/AppError";
 import { sslService } from "../sslcomarz/sslcommarz.services";
 import { ISslcomarz } from "../sslcomarz/sslCommarz.interface";
-import { genaretePdf, IInvoice } from "../../utilse/invoice";
+import { genaretePdf, IInvoiceData } from "../../utilse/invoice";
 import { ITour } from "../tour/tour.interface";
 import { IUser } from "../user/user.interface";
 import sendEmail from "../../utilse/sendmail";
+import { buffreCloudenaryUpload } from "../../config/cloudenary.config";
 
 const successPayment = async (query: Record<string, string>) => {
   console.log(query);
@@ -31,6 +32,7 @@ const successPayment = async (query: Record<string, string>) => {
         session,
       }
     );
+    console.log("updated payment", updatedPayment);
 
     if (!updatedPayment) {
       throw new AppError(httpStatus.BAD_REQUEST, "No updated payment found");
@@ -44,20 +46,40 @@ const successPayment = async (query: Record<string, string>) => {
       .session(session)
       .populate("user", "name email phone address")
       .populate("tour", "title costFrom");
+
+    console.log("updated booking", bookingUpdate);
     if (!bookingUpdate) {
       throw new AppError(httpStatus.BAD_REQUEST, "Booking not found");
     }
 
-    const invoiceData: IInvoice = {
-      bookingDate: bookingUpdate?.createdAt || new Date(),
-      totalAmount: updatedPayment.amount,
+    const invoiceData: IInvoiceData = {
+      bookingDate: bookingUpdate.createdAt as Date,
       geustCount: bookingUpdate.geustCount,
-      tourTitle: (bookingUpdate?.tour as unknown as ITour).title,
+      totalAmount: updatedPayment.amount,
+      tourTitle: (bookingUpdate.tour as unknown as ITour).title,
       transectionId: updatedPayment.transectionId,
       userName: (bookingUpdate.user as unknown as IUser).name,
     };
 
     const pdfBuffer = await genaretePdf(invoiceData);
+
+    const cloudenaruresult: any = await buffreCloudenaryUpload(
+      pdfBuffer,
+      "invoice"
+    );
+    console.log(cloudenaruresult);
+
+    if (!cloudenaruresult) {
+      throw new AppError(401, "invoice upload error ");
+    }
+
+    await Payment.findByIdAndUpdate(
+      updatedPayment._id,
+      {
+        invoiceUrl: cloudenaruresult.secure_url,
+      },
+      { runValidators: true, session }
+    );
 
     sendEmail({
       to: (bookingUpdate.user as unknown as IUser).email,
@@ -67,7 +89,7 @@ const successPayment = async (query: Record<string, string>) => {
       attachments: [
         {
           filename: "invoice.pdf",
-          content: JSON.stringify(pdfBuffer, null, 2),
+          content: pdfBuffer as Buffer,
           contentType: "application/pdf",
         },
       ],
@@ -83,6 +105,7 @@ const successPayment = async (query: Record<string, string>) => {
     };
   } catch (error) {
     console.error(error);
+    console.log(error);
     await session.abortTransaction();
     session.endSession();
     throw error;

@@ -1,7 +1,6 @@
-import AppError from "../errorHalper/AppError";
 import PDFDocument from "pdfkit";
 
-export interface IInvoice {
+export interface IInvoiceData {
   transectionId: string;
   bookingDate: Date;
   userName: string;
@@ -10,32 +9,26 @@ export interface IInvoice {
   totalAmount: number;
 }
 
-export const genaretePdf = async (invoiceData: IInvoice) => {
-  try {
-    return new Promise((resolve, reject) => {
-      const doc = new PDFDocument({
-        size: "A4",
-        margin: 50,
-      });
+export const genaretePdf = async (
+  invoiceData: IInvoiceData
+): Promise<Buffer> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({ size: "A4", margin: 50 });
+      const chunks: Uint8Array[] = [];
 
-      const buffer: Uint8Array[] = [];
+      doc.on("data", (chunk) => chunks.push(chunk));
+      doc.on("end", () => resolve(Buffer.concat(chunks)));
+      doc.on("error", (err) => reject(err));
 
-      doc.on("data", (chunk) => buffer.push(chunk));
-      doc.on("end", () => resolve(buffer.concat(buffer)));
-      doc.on("erroe", (error) => reject(error));
+      doc.text(`Invoice for ${invoiceData.userName}`);
+      doc.text(`Tour: ${invoiceData.tourTitle}`);
+      doc.text(`Transaction ID: ${invoiceData.transectionId}`);
+      doc.text(`Total Amount: ${invoiceData.totalAmount}`);
 
-      doc.fontSize(20).text("invoice", { align: "center" });
-      doc.moveDown();
-      doc.fontSize(20).text(`transectionId:${invoiceData.transectionId}`);
-      doc.fontSize(20).text(`bookingDate:${invoiceData.bookingDate}`);
-      doc.fontSize(20).text(`userName:${invoiceData.userName}`);
-      doc.moveDown();
-
-      doc.text(`tour:${invoiceData.tourTitle}`);
-      doc.text(`gouest:${invoiceData.geustCount}`);
-      doc.text(`total amount:${invoiceData.totalAmount}`);
-    });
-  } catch (error) {
-    throw new AppError(401, `createtion error ${error}`);
-  }
+      doc.end();
+    } catch (err) {
+      reject(err);
+    }
+  });
 };

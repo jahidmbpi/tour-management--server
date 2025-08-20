@@ -63,12 +63,34 @@ const updateUser = async (
     ) {
       throw new AppError(httpStatus.FORBIDDEN, "you are not authorized");
     }
+
+    if (decodedTocken.Role === Role.USER || decodedTocken.Role === Role.GUIDE) {
+      if (userId !== decodedTocken.userId) {
+        throw new AppError(
+          401,
+          "you are not permited  to update another profile"
+        );
+      }
+    }
+    if (
+      decodedTocken.Role === Role.ADMIN &&
+      ifUserExist.role === Role.SUPER_ADMIN
+    ) {
+      throw new AppError(401, "you are not authorized this route");
+    }
   }
 
   if (payload.isActive || payload.isDeleted || payload.isVerified) {
     if (decodedTocken.role === Role.USER || decodedTocken.role === Role.GUIDE) {
       throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
     }
+  }
+
+  if (
+    decodedTocken.Role === Role.ADMIN &&
+    ifUserExist.role === Role.SUPER_ADMIN
+  ) {
+    throw new AppError(401, "you are not authorized this route");
   }
 
   const newUpdatedUser = await User.findByIdAndUpdate(userId, payload, {
