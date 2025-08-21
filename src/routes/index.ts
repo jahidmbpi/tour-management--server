@@ -44,7 +44,7 @@ const moduleRoutes = [
     route: otpRoute,
   },
   {
-    path: "stats",
+    path: "/stats",
     route: statsRoute,
   },
 ];

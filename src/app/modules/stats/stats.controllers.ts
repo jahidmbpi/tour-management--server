@@ -27,7 +27,7 @@ const getTour = catchAsync(async (req, res) => {
   sendResponse(res, {
     success: true,
     statusCode: hthpStatus.OK,
-    massage: "  your profile retrived succesfully",
+    massage: "  this is tou stats succesfully",
     data: result,
   });
 });
