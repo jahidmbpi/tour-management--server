@@ -4,11 +4,8 @@ import { isActive } from "../user/user.interface";
 import { User } from "../user/user.model";
 
 const now = new Date();
-
-const sevenDaysAgo = new Date(now);
-sevenDaysAgo.setDate(now.getDate() - 7);
-const thirtyDaysAgo = new Date(now);
-thirtyDaysAgo.setDate(now.getDate() - 30);
+const sevenDaysAgo = new Date(now).setDate(now.getDate() - 7);
+const thirtyDaysAgo = new Date(now).setDate(now.getDate() - 30);
 const getUser = async () => {
   const totalUsersPromise = User.countDocuments();
 
@@ -226,13 +223,52 @@ const getBooking = async () => {
     },
   ]);
 
-  const [totalBooking, totBookingByStatus, bookingPertour] = await Promise.all([
+  const avgGeustPerBoookingpromise = Booking.aggregate([
+    {
+      $group: {
+        _id: null,
+        avgGuestCournt: { $avg: "$geustCount" },
+      },
+    },
+  ]);
+
+  const totalBookingUniqeuserPromise = Booking.distinct("user").then(
+    (user) => user.length
+  );
+
+  const bookingLastSavendayspromise = Booking.countDocuments({
+    createdAt: { $gte: sevenDaysAgo },
+  });
+  const bookingLastThirtyDayspromise = Booking.countDocuments({
+    createdAt: { $gte: thirtyDaysAgo },
+  });
+  const [
+    totalBooking,
+    totBookingByStatus,
+    bookingPertour,
+    avgGeustPerBoooking,
+    bookingLastSavendays,
+    bookingLastThirdydays,
+    totalBookingUniqeuser,
+  ] = await Promise.all([
     totalBookingPromise,
     totalBookingByStatuspromise,
     bookingPertourPromise,
+    avgGeustPerBoookingpromise,
+    bookingLastSavendayspromise,
+    bookingLastThirtyDayspromise,
+    totalBookingUniqeuserPromise,
   ]);
 
-  return { totalBooking, totBookingByStatus, bookingPertour };
+  return {
+    totalBooking,
+    totBookingByStatus,
+    bookingPertour,
+    avgGeustPerBoooking,
+    bookingLastSavendays,
+    bookingLastThirdydays,
+    totalBookingUniqeuser,
+  };
 };
 const getPayment = () => {
   return {};
