@@ -1,4 +1,6 @@
 import { Booking } from "../booking/booking.model";
+import { PAYMENT_STATUS } from "../payment/payment.interface";
+import { Payment } from "../payment/payment.model";
 import { Tour } from "../tour/tour.model";
 import { isActive } from "../user/user.interface";
 import { User } from "../user/user.model";
@@ -270,8 +272,66 @@ const getBooking = async () => {
     totalBookingUniqeuser,
   };
 };
-const getPayment = () => {
-  return {};
+
+const getPayment = async () => {
+  const totalPaymetpromise = Payment.countDocuments();
+  const totalPaymentRvineuPromise = Payment.aggregate([
+    {
+      $match: { status: PAYMENT_STATUS.PAID },
+    },
+    {
+      $group: {
+        _id: "$status",
+        totalrevineu: { $sum: "$amount" },
+      },
+    },
+  ]);
+
+  const totalPaymentStatusPromise = Payment.aggregate([
+    {
+      $group: {
+        _id: null,
+        count: { $sum: "$amount" },
+      },
+    },
+  ]);
+  const avgPaymentStatusPromise = Payment.aggregate([
+    {
+      $group: {
+        _id: null,
+        avgAmount: { $avg: "$amount" },
+      },
+    },
+  ]);
+
+  const paymentgatwayPromise = Payment.aggregate([
+    {
+      $group: {
+        _id: { ifNull: ["paymentGetWayData.status", "UNKNOWN"] },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  const [
+    totalPaymet,
+    totalPaymentByStatus,
+    totalPaymentStatus,
+    avgPaymentStatus,
+    paymentgatway,
+  ] = await Promise.all([
+    totalPaymetpromise,
+    totalPaymentRvineuPromise,
+    totalPaymentStatusPromise,
+    avgPaymentStatusPromise,
+    paymentgatwayPromise,
+  ]);
+  return {
+    totalPaymet,
+    totalPaymentByStatus,
+    totalPaymentStatus,
+    avgPaymentStatus,
+    paymentgatway,
+  };
 };
 
 export const statsServices = {
