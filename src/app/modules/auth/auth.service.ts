@@ -23,6 +23,9 @@ const credentialLogin = async (payload: Partial<IUser>) => {
   if (!isUserExist) {
     throw new AppError(httpStatus.BAD_REQUEST, "User doesn't exist");
   }
+  if (!isUserExist.isVerified) {
+    return new AppError(401, "you are not verified");
+  }
 
   const userTocken = createUserToken(isUserExist);
 

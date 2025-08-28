@@ -10,6 +10,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { isActive, Role } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
 import { envVars } from "./env";
+import AppError from "../errorHalper/AppError";
 
 passport.use(
   new LocalStrategy(
@@ -33,6 +34,9 @@ passport.use(
         }
         if (isUserExist.isDeleted) {
           return done("User is deleted");
+        }
+        if (!isUserExist.isVerified) {
+          return new AppError(401, "you are not verified");
         }
 
         const isGoogleAuthenticated = isUserExist.auths.some(
