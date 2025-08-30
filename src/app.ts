@@ -1,5 +1,5 @@
 import Express, { Request, Response } from "express";
-import cros from "cors";
+import cors from "cors";
 
 import { globalErrorhandelar } from "./app/middlewares/globalErrorHandelars/globalErrorHandelars";
 import notFound from "./app/middlewares/notFound/notFound";
@@ -23,7 +23,7 @@ app.use(passport.session());
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 app.use(
-  cros({
+  cors({
     origin: envVars.FRONTANT_URL,
     credentials: true,
   })

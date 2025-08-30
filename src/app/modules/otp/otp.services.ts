@@ -9,8 +9,8 @@ const genaretOtp = (length = 6) => {
   const otp = crypto.randomInt(10 ** (length - 1), 10 ** length).toString();
   return otp;
 };
-const sendOtp = async (name: string, email: string) => {
-  console.log(email, name);
+const sendOtp = async (email: string) => {
+  console.log(email);
   const otp = genaretOtp();
   const redisKey = `otp:${email}`;
   await redisClient.set(redisKey, otp, {
@@ -24,7 +24,6 @@ const sendOtp = async (name: string, email: string) => {
     subject: "your otp code ",
     template: "otp",
     templateData: {
-      name: name,
       otp: otp,
     },
   });
@@ -34,7 +33,7 @@ const sendOtp = async (name: string, email: string) => {
 
 const verifyOtp = async (email: string, otp: string) => {
   const redisKey = `otp:${email}`;
-  const saveOtp = redisClient.get(redisKey);
+  const saveOtp = await redisClient.get(redisKey);
 
   if (!saveOtp) {
     throw new AppError(404, "please provide your otp ");
