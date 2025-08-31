@@ -3,5 +3,6 @@ import { otpController } from "./otp.controllers";
 const router = Router();
 
 router.post("/send", otpController.sendOtp);
+router.post("/verify", otpController.verifydOtp);
 
 export const otpRoute = router;

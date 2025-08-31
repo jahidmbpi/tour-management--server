@@ -7,8 +7,8 @@ import { otpServices } from "./otp.services";
 const sendOtp = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.body;
   console.log(email);
-  const resust = await otpServices.sendOtp(email);
-  console.log(resust);
+  await otpServices.sendOtp(email);
+
   sendResponse(res, {
     success: true,
     statusCode: hthpStatus.OK,
@@ -18,11 +18,14 @@ const sendOtp = catchAsync(async (req: Request, res: Response) => {
 });
 
 const verifydOtp = catchAsync(async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
+  const result = await otpServices.verifyOtp(email, otp);
+
   sendResponse(res, {
     success: true,
     statusCode: hthpStatus.OK,
-    massage: "  otp verify succesfully",
-    data: null,
+    massage: "otp verify succesfully",
+    data: result,
   });
 });
 
