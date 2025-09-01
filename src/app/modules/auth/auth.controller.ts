@@ -68,12 +68,12 @@ const getnewAccessTocken = catchAsync(
 );
 const logOut = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.clearCookie("accesstocken", {
+    res.clearCookie("accessToken", {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
     });
-    res.clearCookie("refreshTocken", {
+    res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
