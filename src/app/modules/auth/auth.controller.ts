@@ -176,6 +176,7 @@ const googleCallback = catchAsync(
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, "User not found");
     }
+    console.log(user);
 
     const tokenInfo = await createUserToken(user);
     console.log(tokenInfo);

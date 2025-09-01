@@ -9,7 +9,7 @@ import { User } from "../modules/user/user.model";
 export const checkAuth = (...allowedRoles: Role[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const accessToken = req.headers.authorization;
+      const accessToken = req.headers.authorization || req.cookies.accessToken;
 
       if (!accessToken) {
         throw new AppError(403, "No Token Recieved");

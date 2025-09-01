@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { authControllers } from "./auth.controller";
 import { checkAuth } from "../../middlewares/cheakAuth";
 
@@ -31,12 +31,13 @@ router.post(
   authControllers.forgotPassword
 );
 
-router.get("/google", (req: Request, res: Response) => {
+router.get("/google", (req: Request, res: Response, next: NextFunction) => {
   const redirect = req.query.redirect || "/";
   passport.authenticate("google", {
     scope: ["profile", "email"],
+    prompt: "consent",
     state: redirect as string,
-  })(req, res);
+  })(req, res, next);
 });
 
 router.get(

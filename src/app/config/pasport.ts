@@ -18,7 +18,6 @@ passport.use(
       passwordField: "password",
     },
     async (email: string, password: string, done) => {
-      console.log(email, password);
       try {
         const isUserExist = await User.findOne({ email });
 
@@ -39,9 +38,10 @@ passport.use(
           return done("you are not verified");
         }
 
-        const isGoogleAuthenticated = isUserExist.auths.some(
-          (providerObjects) => providerObjects.provider == "google"
-        );
+        const isGoogleAuthenticated =
+          isUserExist?.auths?.some(
+            (providerObjects) => providerObjects.provider == "google"
+          ) ?? false;
 
         if (isGoogleAuthenticated && !isUserExist.password) {
           return done(null, false, {
@@ -86,8 +86,8 @@ passport.use(
         if (!email) {
           return done(null, false, { mesaage: "No email found" });
         }
-
         let isUserExist = await User.findOne({ email });
+
         if (isUserExist && !isUserExist.isVerified) {
           return done(null, false, { message: "User is not verified" });
         }
@@ -104,6 +104,11 @@ passport.use(
           return done(null, false, { message: "User is deleted" });
         }
 
+        const isGoogleAuthenticated =
+          isUserExist?.auths?.some(
+            (providerObjects) => providerObjects.provider == "google"
+          ) ?? false;
+
         if (!isUserExist) {
           isUserExist = await User.create({
             email,
@@ -118,6 +123,12 @@ passport.use(
               },
             ],
           });
+        } else if (isUserExist && !isGoogleAuthenticated) {
+          isUserExist.auths.push({
+            provider: "google",
+            providerID: profile.id,
+          });
+          await isUserExist.save();
         }
 
         return done(null, isUserExist);
