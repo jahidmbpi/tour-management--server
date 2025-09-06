@@ -11,10 +11,17 @@ const createDivision = async (
   next: NextFunction
 ) => {
   try {
+    const fileBuffer = req.file?.buffer;
+    const fileName = req.file?.originalname;
+
+    console.log("Buffer length:", fileBuffer?.length);
+    console.log("File name:", fileName);
+    console.log("File info:", req.file);
     const payload: IDivission = {
       ...req.body,
       thumbnail: req.file?.path,
     };
+    console.log(payload);
     const result = await divisionServices.createDivision(payload);
     res.status(hthpStatus.CREATED).json({
       success: true,

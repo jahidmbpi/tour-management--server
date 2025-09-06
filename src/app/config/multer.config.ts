@@ -7,6 +7,7 @@ const storege = new CloudinaryStorage({
   cloudinary: cloudinaryUpload,
   params: {
     public_id: (req, file) => {
+      console.log("this is multer file", file);
       const fileName = file.originalname
         .toLocaleLowerCase()
         .replace(/\s+/g, "-")

@@ -15,6 +15,7 @@ export const buffreCloudenaryUpload = async (
 ) => {
   try {
     return new Promise((resolve, reject) => {
+      console.log("this is  cloudenary file name", fileName);
       const public_id = `pdf/${fileName}-${Date.now()}`;
 
       const bufferStream = new stream.PassThrough();
